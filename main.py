@@ -59,6 +59,12 @@ class Register_form(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Register', validators=[DataRequired()])
 
+#Create a Flask_Form to login users.
+class Login_form(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
 # Create the database
 # with app.app_context():
 #     db.create_all()
@@ -86,6 +92,7 @@ def post_ad():
         new_ad = Ad(ad_title=title, description=description, img_url=img_url)
         db.session.add(new_ad)
         db.session.commit()
+        return redirect(url_for('home'))
     return render_template('post.html',form=form)
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -104,10 +111,37 @@ def register():
         new_user = User(name=name,email=email,contact_number=contact_number,password=hashed_salted_password)
         db.session.add(new_user)
         db.session.commit()
+        user = User.query.filter_by(email=email).first()
+        login_user(user)
+        print(current_user)
+        return redirect(url_for('home', logged_in=current_user.is_authenticated))
     return render_template('register.html', register_form=register_form)
 
+@app.route('/login',methods=['GET','POST'])
+def login():
+    login_form = Login_form()
+    if login_form.validate_on_submit():
+        email = login_form.email.data
+        password = login_form.password.data
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('The email does not exists, please try again')
+            return redirect(url_for('login'))
+        if check_password_hash(user.password, password):
+            login_user(user)
+            print(current_user)
+            print(current_user.is_authenticated)
+            return redirect(url_for('home'))
+        else:
+            flash('Password incorrect, please try again with correct credentials.')
+    return render_template('login.html', login_form=login_form, logged_in=current_user.is_authenticated)
 
-
+@app.route('/logout')
+def logout():
+    logout_user()
+    print(current_user)
+    print(current_user.is_authenticated)
+    return redirect(url_for('home'))
 
 
 if __name__ == "__main__":
