@@ -74,7 +74,7 @@ class Login_form(FlaskForm):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User.query.get(user_id)
 
 @app.route('/')
 # Get all the ads in the home page.
@@ -99,7 +99,7 @@ def post_ad():
 def register():
     register_form = Register_form()
     if register_form.validate_on_submit():
-        name = register_form.name.data
+        name = register_form.name.data.title()
         email = register_form.email.data
         contact_number = register_form.contact_number.data
         hashed_salted_password = generate_password_hash(register_form.password.data,method="pbkdf2:sha256",salt_length=8)
