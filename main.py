@@ -39,6 +39,7 @@ class Ad(db.Model):
     __tablename__ = "ads"
     id = db.Column(db.Integer,primary_key=True)
     ad_title = db.Column(db.String(250), nullable=False)
+    ad_price = db.Column(db.Integer, nullable=False)
     img_url = db.Column(db.String(250))
     description = db.Column(db.Text, nullable=False)
     author = relationship('User', back_populates='posts')
@@ -50,6 +51,7 @@ class Ad(db.Model):
 class Ad_details(FlaskForm):
     ad_title = StringField('Title', validators=[DataRequired()])
     ad_description = StringField('Description', validators=[DataRequired()])
+    ad_price = IntegerField('Price', validators=[DataRequired()])
     image_url = StringField('Image URL')
     submit = SubmitField('Post Ad')
 
@@ -68,8 +70,8 @@ class Login_form(FlaskForm):
     submit = SubmitField('Submit')
 
 # Create the database
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 
 def admin_only(f):
@@ -103,10 +105,10 @@ def post_ad():
         title = form.ad_title.data
         description = form.ad_description.data
         img_url = form.image_url.data
+        price = form.ad_price.data
         author = current_user
         current_date = date.today().strftime("%B %d, %Y")
-        new_ad = Ad(ad_title=title, description=description, img_url=img_url, author=author, date=current_date)
-
+        new_ad = Ad(ad_title=title, description=description, img_url=img_url, author=author, date=current_date,ad_price=price)
         db.session.add(new_ad)
         db.session.commit()
         return redirect(url_for('home'))
