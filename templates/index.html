@@ -39,7 +39,10 @@
                   <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
                   <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
                 </div>
-                <small class="text-body-secondary">Posted By {{ ad.author.name }}</small>
+                {% if current_user.id==1: %}
+                <a href="{{url_for('delete_post', post_id=ad.id) }}">✘</a>
+                {% endif %}
+                <small class="text-body-secondary">Posted by {{ ad.author.name }}</small>
               </div>
             </div>
           </div>

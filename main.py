@@ -1,4 +1,4 @@
-from flask import Flask,render_template,redirect,flash, url_for
+from flask import Flask,render_template,redirect,flash, url_for,abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
@@ -70,6 +70,18 @@ class Login_form(FlaskForm):
 # Create the database
 # with app.app_context():
 #     db.create_all()
+
+
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+
+        if current_user.id != 1:
+            return abort(403)
+
+        return f(*args,**kwargs)
+    return decorated_function
+
 
 
 
@@ -147,6 +159,16 @@ def logout():
     print(current_user)
     print(current_user.is_authenticated)
     return redirect(url_for('home'))
+
+@app.route('/delete/<int:post_id>')
+@admin_only
+def delete_post(post_id):
+    post_to_delete = Ad.query.get(post_id)
+    db.session.delete(post_to_delete)
+    db.session.commit()
+    return redirect(url_for('home'))
+
+
 
 
 if __name__ == "__main__":
