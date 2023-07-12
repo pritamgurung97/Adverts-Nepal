@@ -124,9 +124,11 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Profile</a>
           </li>
+            {% if current_user.is_authenticated: %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
           </li>
+            {% endif %}
           {% if not current_user.is_authenticated: %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('login') }}">Login</a>

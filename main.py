@@ -9,6 +9,7 @@ from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired
 from wtforms import SubmitField,StringField,IntegerField,PasswordField
 from functools import wraps
+from datetime import date
 
 
 app = Flask(__name__)
@@ -42,6 +43,7 @@ class Ad(db.Model):
     description = db.Column(db.Text, nullable=False)
     author = relationship('User', back_populates='posts')
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    date = db.Column(db.String(250), nullable=False)
 
 # Create a Flask_Form for posting an ad to the database
 
@@ -89,7 +91,10 @@ def post_ad():
         title = form.ad_title.data
         description = form.ad_description.data
         img_url = form.image_url.data
-        new_ad = Ad(ad_title=title, description=description, img_url=img_url)
+        author = current_user
+        current_date = date.today().strftime("%B %d, %Y")
+        new_ad = Ad(ad_title=title, description=description, img_url=img_url, author=author, date=current_date)
+
         db.session.add(new_ad)
         db.session.commit()
         return redirect(url_for('home'))
