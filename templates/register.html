@@ -1,14 +1,33 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
-{% block head %}
 
 {% block title %}Register User{% endblock %}
 
-{% endblock %}
 
 {% block content %}
-    <form class= 'form form-horizontal' method="POST" role="form">
-        {{ wtf.quick_form(register_form,novalidate=True, button_map={"submit": "primary"}) }}
-    </form>
+     <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8 col-sm-10">
+        <div class="card mt-5">
+          <div class="card-header text-center">
+            <h4>Register</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {{ form.csrf_token }}
+              {{ form.name.label }} {{ form.name(class="form-control") }}
+              {{ form.email.label }} {{ form.email(class="form-control") }}
+              {{ form.contact_number.label }} {{ form.contact_number(class="form-control") }}
+              {{ form.password.label }} {{ form.password(class="form-control") }}
+              <button type="submit" class="btn btn-primary btn-block">Register</button>
+            </form>
+          </div>
+          <div class="card-footer text-center">
+            Already have an account? <a href="{{ url_for('login') }}">Login</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

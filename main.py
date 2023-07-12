@@ -59,7 +59,7 @@ class Register_form(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     contact_number = IntegerField('Contact Number', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Register', validators=[DataRequired()])
+    submit = SubmitField('Register')
 
 #Create a Flask_Form to login users.
 class Login_form(FlaskForm):
@@ -120,6 +120,7 @@ def register():
         email = register_form.email.data
         contact_number = register_form.contact_number.data
         hashed_salted_password = generate_password_hash(register_form.password.data,method="pbkdf2:sha256",salt_length=8)
+        print(name)
         user = User.query.filter_by(email=email).first()
         if user:
             flash('The email already exists, please try logging in instead')
@@ -132,7 +133,7 @@ def register():
         login_user(user)
         print(current_user)
         return redirect(url_for('home', logged_in=current_user.is_authenticated))
-    return render_template('register.html', register_form=register_form)
+    return render_template('register.html', form=register_form)
 
 @app.route('/login',methods=['GET','POST'])
 def login():
@@ -151,7 +152,7 @@ def login():
             return redirect(url_for('home'))
         else:
             flash('Password incorrect, please try again with correct credentials.')
-    return render_template('login.html', login_form=login_form, logged_in=current_user.is_authenticated)
+    return render_template('login.html', form=login_form, logged_in=current_user.is_authenticated)
 
 @app.route('/logout')
 def logout():
@@ -172,4 +173,4 @@ def delete_post(post_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port="5001")

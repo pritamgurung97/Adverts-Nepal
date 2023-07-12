@@ -1,10 +1,31 @@
 {% extends 'base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
+{% include 'header.html' %}
 
 {% block title %}Post Ad{% endblock %}
 
 {% block content %}
-    <form class= 'form form-horizontal' method="POST" role="form">
-        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
-    </form>
+    <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card mt-5">
+          <div class="card-header text-center">
+            <h4>Post Ad</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {{ form.csrf_token }}
+              {{ form.ad_title.label }} {{ form.ad_title(class="form-control") }}
+              {{ form.ad_description.label }} {{ form.ad_description(class="form-control") }}
+              {{ form.image_url.label }} {{ form.image_url(class="form-control") }}
+              <button type="submit" class="btn btn-primary btn-block">Post Ad</button>
+            </form>
+          </div>
+          <div class="card-footer text-center">
+            <a href="{{ url_for('home') }}">Back to Home</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
