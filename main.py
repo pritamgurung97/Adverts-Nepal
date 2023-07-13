@@ -1,4 +1,4 @@
-from flask import Flask,render_template,redirect,flash, url_for,abort
+from flask import Flask,render_template,redirect,flash, url_for,abort,request,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
@@ -69,6 +69,16 @@ class Login_form(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+#Create a Flask_Form to edit ad.
+
+class Edit_form(FlaskForm):
+    ad_title = StringField('Title')
+    ad_description = StringField('Description')
+    ad_price = IntegerField('Price')
+    image_url = StringField('Image URL')
+    submit = SubmitField('Post Ad')
+
+
 # Create the database
 with app.app_context():
     db.create_all()
@@ -84,6 +94,16 @@ def admin_only(f):
         return f(*args,**kwargs)
     return decorated_function
 
+
+def author_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        print(f"author_id from author only decorator: {kwargs['author_id']}")
+        if current_user.id != kwargs['author_id']:
+            return abort(403)
+
+        return f(*args,**kwargs)
+    return decorated_function
 
 
 
@@ -180,6 +200,32 @@ def view_ad(post_id):
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+@app.route('/edit-ad/<int:post_id>/<int:author_id>', methods=['GET', 'POST'])
+@author_only
+def edit_ad(post_id,author_id):
+    ad_to_be_edited = Ad.query.get(post_id)
+    print(f'author id : ')
+    print(f'current user : {current_user.id}')
+    edit_form = Edit_form(
+        ad_title=ad_to_be_edited.ad_title,
+        ad_price=ad_to_be_edited.ad_price,
+        image_url=ad_to_be_edited.img_url,
+        ad_description=ad_to_be_edited.description,
+    )
+    if edit_form.validate_on_submit():
+        ad_to_be_edited.ad_title = edit_form.ad_title.data
+        ad_to_be_edited.ad_price = edit_form.ad_price.data
+        ad_to_be_edited.img_url = edit_form.image_url.data
+        ad_to_be_edited.description = edit_form.ad_description.data
+        db.session.commit()
+        return redirect(url_for('view_ad', post_id=post_id))
+
+    return render_template('post.html', form=edit_form)
+
+
+
 
 
 
