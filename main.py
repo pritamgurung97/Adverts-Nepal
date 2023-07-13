@@ -119,7 +119,7 @@ def register():
     register_form = Register_form()
     if register_form.validate_on_submit():
         name = register_form.name.data.title()
-        email = register_form.email.data
+        email = register_form.email.data.lower()
         contact_number = register_form.contact_number.data
         hashed_salted_password = generate_password_hash(register_form.password.data,method="pbkdf2:sha256",salt_length=8)
         print(name)
@@ -134,14 +134,14 @@ def register():
         user = User.query.filter_by(email=email).first()
         login_user(user)
         print(current_user)
-        return redirect(url_for('home', logged_in=current_user.is_authenticated))
+        return redirect(url_for('home'))
     return render_template('register.html', form=register_form)
 
 @app.route('/login',methods=['GET','POST'])
 def login():
     login_form = Login_form()
     if login_form.validate_on_submit():
-        email = login_form.email.data
+        email = login_form.email.data.lower()
         password = login_form.password.data
         user = User.query.filter_by(email=email).first()
         if not user:
@@ -171,11 +171,11 @@ def delete_post(post_id):
     db.session.commit()
     return redirect(url_for('home'))
 
-@app.route('/view-post/<int:post_id>', methods=['GET','POST'])
+@app.route('/view-ad/<int:post_id>', methods=['GET','POST'])
 def view_ad(post_id):
-    ad = Ad.query.get(post_id)
-    print(ad)
-    return render_template('view_ad.html')
+    requested_ad = Ad.query.get(post_id)
+    print(requested_ad)
+    return render_template('view_ad.html', ad=requested_ad,current_user=current_user)
 
 
 
