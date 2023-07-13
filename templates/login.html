@@ -16,9 +16,18 @@
           </div>
           <div class="card-body">
             <form method="POST">
+              {% with messages= get_flashed_messages() %}
+              {% if messages: %}
+              {% for message in messages %}
+              <p class="flashes flash-red"> {{message}} </p>
+              {% endfor %}
+              {% endif %}
+              {% endwith %}
+
               {{ form.csrf_token }}
               {{ form.email.label }} {{ form.email(class="form-control") }}
               {{ form.password.label }} {{ form.password(class="form-control") }}
+
               <button type="submit" class="btn btn-primary btn-block">Login</button>
             </form>
           </div>

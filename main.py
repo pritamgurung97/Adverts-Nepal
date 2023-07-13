@@ -145,7 +145,7 @@ def login():
         password = login_form.password.data
         user = User.query.filter_by(email=email).first()
         if not user:
-            flash('The email does not exists, please try again')
+            flash('The email does not exists, please sign up first')
             return redirect(url_for('login'))
         if check_password_hash(user.password, password):
             login_user(user)
