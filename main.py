@@ -171,6 +171,12 @@ def delete_post(post_id):
     db.session.commit()
     return redirect(url_for('home'))
 
+@app.route('/view-post/<int:post_id>', methods=['GET','POST'])
+def view_ad(post_id):
+    ad = Ad.query.get(post_id)
+    print(ad)
+    return render_template('view_ad.html')
+
 
 
 
