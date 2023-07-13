@@ -177,6 +177,10 @@ def view_ad(post_id):
     print(requested_ad)
     return render_template('view_ad.html', ad=requested_ad,current_user=current_user)
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 
 
 
