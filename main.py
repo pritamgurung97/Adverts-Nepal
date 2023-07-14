@@ -11,6 +11,8 @@ from wtforms import SubmitField,StringField,IntegerField,PasswordField
 from functools import wraps
 from datetime import date
 from wtforms.validators import Email
+from flask_ckeditor import CKEditorField
+from flask_gravatar import Gravatar
 
 
 app = Flask(__name__)
@@ -24,6 +26,14 @@ login_manager.init_app(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+gravatar = Gravatar(app,
+                    size=100,
+                    rating='g',
+                    default='retro',
+                    force_default=False,
+                    force_lower=False,
+                    use_ssl=False,
+                    base_url=None)
 
 
 
@@ -95,6 +105,10 @@ class Edit_form(FlaskForm):
     ad_price = IntegerField('Price')
     image_url = StringField('Image URL')
     submit = SubmitField('Post Ad')
+
+class CommentForm(FlaskForm):
+    comment = CKEditorField("Comment", validators=[DataRequired()])
+    submit = SubmitField("Submit Comment")
 
 
 # Create the database
@@ -211,9 +225,20 @@ def delete_post(post_id):
 
 @app.route('/view-ad/<int:post_id>', methods=['GET','POST'])
 def view_ad(post_id):
+    form = CommentForm()
     requested_ad = Ad.query.get(post_id)
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash('You need to login or register to comment')
+            return redirect(url_for('login'))
+        text = form.comment.data
+        new_comment = Comment(text=text, comment_author=current_user,parent_post=requested_ad)
+        db.session.add(new_comment)
+        db.session.commit()
+
+
     print(requested_ad)
-    return render_template('view_ad.html', ad=requested_ad,current_user=current_user)
+    return render_template('view_ad.html', ad=requested_ad,current_user=current_user, form=form)
 
 @app.route('/about')
 def about():

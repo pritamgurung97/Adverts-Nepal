@@ -1,31 +1,51 @@
 {% extends 'base.html' %}
 {% include 'header.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
+{% block stylesheets_link %}
+{{ super() }}
+<link href="/static/css/adverts.css" rel="stylesheet">
+{% endblock %}
 {% block content %}
-
 <div class="container pt-4">
-    <div class="card">
-      <div class="row no-gutters">
-        <div class="col-md-4">
-          <img src="{{ad.img_url}}" class="card-img ad-image" alt="Ad Image">
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h5 class="card-title">{{ ad.ad_title }}</h5>
-            <p class="card-text">{{ ad.description }}</p>
-            <h6 class="card-subtitle mb-2 text-muted">Price: रु-/{{ ad.ad_price }}</h6>
-            <a href="#" class="btn btn-primary">Contact Seller</a>
-            <a href="#" class="btn btn-primary">Add a Comment</a>
-          </div>
+  <div class="card">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        <img src="{{ ad.img_url }}" class="card-img ad-image" alt="Ad Image">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{ ad.ad_title }}</h5>
+          <p class="card-text">{{ ad.description }}</p>
+          <h6 class="card-subtitle mb-2 text-muted">Price: रु-/{{ ad.ad_price }}</h6>
+          <a href="#" class="btn btn-dark">Contact Seller</a>
+          <a href="#" class="btn btn-dark">Add a Comment</a>
         </div>
       </div>
     </div>
   </div>
 
+<!-- Load the Ckeditor form-->
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='comment_text') }}
+{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "dark"}) }}
+</div>
 
-
-
+<div class="col-lg-8 col-md-8 mx-auto comment">
+  {% for comment in ad.comments %}
+  <ul class="commentList">
+    <li>
+      <div class="commenterImage">
+        <img src="{{ comment.comment_author.email | gravatar }}" />
+      </div>
+      <div class="commentText">
+        {{ comment.text|safe }}
+        <span class="date sub-text">{{ comment.comment_author.name }}</span>
+      </div>
+    </li>
+  </ul>
+  {% endfor %}
+</div>
 
 
 {% endblock %}
-
