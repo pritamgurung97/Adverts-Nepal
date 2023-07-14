@@ -10,6 +10,7 @@ from wtforms.validators import DataRequired
 from wtforms import SubmitField,StringField,IntegerField,PasswordField
 from functools import wraps
 from datetime import date
+from wtforms.validators import Email
 
 
 app = Flask(__name__)
@@ -34,6 +35,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(250), nullable=False)
     password = db.Column(db.String(250), nullable=False)
     posts = relationship('Ad', back_populates='author')
+    comments = relationship('Comment', back_populates='comment_author')
 
 class Ad(db.Model):
     __tablename__ = "ads"
@@ -45,6 +47,22 @@ class Ad(db.Model):
     author = relationship('User', back_populates='posts')
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     date = db.Column(db.String(250), nullable=False)
+
+    #Parent relationship
+    comments = relationship("Comment", back_populates="parent_post")
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    comment_author = relationship('User',back_populates="comments")
+
+    #child relationship
+    ad_id = db.Column(db.Integer, db.ForeignKey("ads.id"))
+    parent_post = relationship("Ad", back_populates="comments")
+    text = db.Column(db.Text, nullable=False)
+
+
 
 # Create a Flask_Form for posting an ad to the database
 
@@ -58,7 +76,7 @@ class Ad_details(FlaskForm):
 #Create a Flask_Form to register users.
 class Register_form(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     contact_number = IntegerField('Contact Number', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Register')
