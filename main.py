@@ -107,7 +107,7 @@ class Edit_form(FlaskForm):
     submit = SubmitField('Post Ad')
 
 class CommentForm(FlaskForm):
-    comment = CKEditorField("Comment", validators=[DataRequired()])
+    comment = StringField("Comment", validators=[DataRequired()])
     submit = SubmitField("Submit Comment")
 
 

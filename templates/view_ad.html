@@ -11,7 +11,7 @@
   <div class="card">
     <div class="row no-gutters">
       <div class="col-md-4">
-        <img src="{{ ad.img_url }}" class="card-img ad-image" alt="Ad Image">
+        <img src="{{ ad.img_url }}" class="card-img ad-image img-fluid" alt="Ad Image">
       </div>
       <div class="col-md-8">
         <div class="card-body">
@@ -20,17 +20,18 @@
           <h6 class="card-subtitle mb-2 text-muted">Price: रु-/{{ ad.ad_price }}</h6>
           <a href="#" class="btn btn-dark">Contact Seller</a>
           <a href="#" class="btn btn-dark">Add a Comment</a>
+          <div class="col-8" style="display:inline-block">
+<!-- Load the Ckeditor form-->
+<!--{{ ckeditor.load() }}-->
+<!--{{ ckeditor.config(name='comment_text') }}-->
+{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "dark"}) }}
+</div>
         </div>
       </div>
     </div>
   </div>
 
-<!-- Load the Ckeditor form-->
-{{ ckeditor.load() }}
-{{ ckeditor.config(name='comment_text') }}
-{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "dark"}) }}
 </div>
-
 <div class="col-lg-8 col-md-8 mx-auto comment">
   {% for comment in ad.comments %}
   <ul class="commentList">

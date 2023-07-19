@@ -4,6 +4,12 @@
  * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-clean-blog/blob/master/LICENSE)
  */
 
+.card-img.ad-image {
+   object-fit: cover;
+   height: 100%;
+   width: 100%;
+}
+
 .comment {
     padding-top: 20px;
 }
