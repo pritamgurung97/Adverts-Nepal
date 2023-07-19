@@ -35,8 +35,6 @@ gravatar = Gravatar(app,
                     use_ssl=False,
                     base_url=None)
 
-
-
 class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
@@ -71,7 +69,6 @@ class Comment(db.Model):
     ad_id = db.Column(db.Integer, db.ForeignKey("ads.id"))
     parent_post = relationship("Ad", back_populates="comments")
     text = db.Column(db.Text, nullable=False)
-
 
 
 # Create a Flask_Form for posting an ad to the database
@@ -243,6 +240,16 @@ def view_ad(post_id):
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.route('/my-profile')
+def get_profile():
+    total_ads = len(current_user.posts)
+    return render_template('profile.html', total_ads=total_ads)
+
+@app.route('/my-ads')
+def get_my_ads():
+    posted_ads = current_user.posts
+    return render_template('my_ads.html', posted_ads=posted_ads)
 
 
 @app.route('/edit-ad/<int:post_id>/<int:author_id>', methods=['GET', 'POST'])
