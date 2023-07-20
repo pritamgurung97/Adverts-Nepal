@@ -232,6 +232,7 @@ def view_ad(post_id):
         new_comment = Comment(text=text, comment_author=current_user,parent_post=requested_ad)
         db.session.add(new_comment)
         db.session.commit()
+        return redirect(url_for('view_ad',post_id=post_id))
 
 
     print(requested_ad)

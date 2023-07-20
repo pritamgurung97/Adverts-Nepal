@@ -6,6 +6,7 @@
 {{ super() }}
 <link href="/static/css/adverts.css" rel="stylesheet">
 {% endblock %}
+
 {% block content %}
 <div class="container pt-4">
   <div class="card">
@@ -21,32 +22,33 @@
           <a href="#" class="btn btn-dark">Contact Seller</a>
           <a href="#" class="btn btn-dark">Add a Comment</a>
           <div class="col-8" style="display:inline-block">
-<!-- Load the Ckeditor form-->
-<!--{{ ckeditor.load() }}-->
-<!--{{ ckeditor.config(name='comment_text') }}-->
-{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "dark"}) }}
-</div>
+            <!-- Load the Ckeditor form -->
+            <!--{{ ckeditor.load() }}-->
+            <!--{{ ckeditor.config(name='comment_text') }}-->
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "dark"}) }}
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="container comment-section mt-4">
+    <h4>Comments</h4>
+    <!-- Comments loop -->
+    {% for comment in ad.comments %}
+    <ul class="commentList">
+      <li>
+        <div class="commenterImage">
+          <img src="{{ comment.comment_author.email | gravatar }}" />
+        </div>
+        <div class="commentText">
+          {{ comment.text|safe }}
+          <br>
+          <span class="date sub-text">{{ comment.comment_author.name }}</span>
+        </div>
+      </li>
+    </ul>
+    {% endfor %}
+  </div>
 </div>
-<div class="col-lg-8 col-md-8 mx-auto comment">
-  {% for comment in ad.comments %}
-  <ul class="commentList">
-    <li>
-      <div class="commenterImage">
-        <img src="{{ comment.comment_author.email | gravatar }}" />
-      </div>
-      <div class="commentText">
-        {{ comment.text|safe }}
-        <span class="date sub-text">{{ comment.comment_author.name }}</span>
-      </div>
-    </li>
-  </ul>
-  {% endfor %}
-</div>
-
-
 {% endblock %}
