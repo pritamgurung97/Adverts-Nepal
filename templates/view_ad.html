@@ -33,6 +33,7 @@
   </div>
 
   <div class="container comment-section mt-4">
+    {% if ad.comments: %}
     <h4>Comments</h4>
     <!-- Comments loop -->
     {% for comment in ad.comments %}
@@ -49,6 +50,7 @@
       </li>
     </ul>
     {% endfor %}
+    {% endif %}
   </div>
 </div>
 {% endblock %}
